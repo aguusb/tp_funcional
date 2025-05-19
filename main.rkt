@@ -61,14 +61,14 @@
   (let* ([i-origen (buscar-indice origen localidades)]
          [i-destino (buscar-indice destino localidades)])
     (cond
-      [(or (not i-origen) (not i-destino) (<= i-destino i-origen))
-       '("ERROR")]
+      [(or (not i-origen) (not i-destino) (<= i-destino i-origen));Si no se encuentra el origen o destino, o si el destino es menor igual que el origen, lanza error
+       '("Error")]
       [else
-       (let* ([total-costo (sumar-costos costos i-origen i-destino)]
-              [horarios-origen (obtener-horarios horarios i-origen)]
-              [salidas (horarios-disponibles horarios-origen hora)])
+       (let* ([total-costo (sumar-costos costos i-origen i-destino)];Calcula el costo total desde el origen al destino
+              [horarios-origen (obtener-horarios horarios i-origen)] ;Obtiene la lista de horarios de la localidad de origen
+              [salidas (horarios-disponibles horarios-origen hora)]) ;Filtra los horarios disponibles de la localidad de origen a partir de la hora ingresada
          (if (empty? salidas)
-             '("NO HAY HORARIOS DE SALIDA DISPONIBLES")
+             '("No Hay Horarios De Salida Disponibles")
              (list (list origen destino) total-costo salidas)))])))
 
 (ArgentinaTur "Córdoba Capital" "La Falda" '(10 30))
