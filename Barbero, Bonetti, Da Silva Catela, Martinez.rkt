@@ -85,3 +85,4 @@
 (ArgentinaTur "Córdoba Capital" "La Falda" '(10 30))
 (ArgentinaTur "Valle Hermoso" "La Cumbre" '(09 00))
 (ArgentinaTur "Córdoba Capital" "La Falda" '(16 00))
+(ArgentinaTur "La Falda" "Córdoba Capital" '(10 00))
