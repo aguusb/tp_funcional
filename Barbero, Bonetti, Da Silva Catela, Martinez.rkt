@@ -34,6 +34,16 @@
 (define (horarios-disponibles lista-horas hora)
   (filter (lambda (h) (compararHora h hora)) lista-horas))
 
+
+#! Esta funcion seria filtrar los horarios disponibles pero si usar el Predicado predefinido de Filter #!
+(define (horarios-disponibles-sin-filter lista-horas hora)
+  (cond
+    [(empty? lista-horas) '()] ;Si la lista esta vacia, devuelve una lista vacia
+    [(compararHora (car lista-horas) hora) ; Si compararHora da [True], entonces se ira alistando el primer elemento de la lista-horas y se sigue recorriendo el resto de la lista
+      (cons (car lista-horas) (horarios-disponibles-sin-filter (cdr lista-horas) hora))]
+    [else 
+      (horarios-disponibles-sin-filter (cdr lista-horas) hora)])) ; Sino, se sigue iterando la lista de horas.  
+
 #! Esta funcion busca el indice de la localidad en la lista de localidades. Si no lo encuentra devuelve [falso]. Si la lista esta vacia, devuelve [falso]. Si el primer elemento de la lista es igual al que buscas, devuelve [true]. Sino, llama recursivamente con el resto de la lista. #!
 (define (buscar-indice localidad lista_localidades)
   (let buscar-indice-recursivo ((resto-lista lista_localidades) (indice 0))
@@ -68,8 +78,10 @@
               [horarios-origen (obtener-horarios horarios i-origen)] ;Obtiene la lista de horarios de la localidad de origen
               [salidas (horarios-disponibles horarios-origen hora)]) ;Filtra los horarios disponibles de la localidad de origen a partir de la hora ingresada
          (if (empty? salidas)
-             '("No Hay Horarios De Salida Disponibles")
+             (list (list origen destino) 0 '"No Hay Horarios De Salida Disponibles")
              (list (list origen destino) total-costo salidas)))])))
 
-(ArgentinaTur "Córdoba Capital" "La Falda" '(10 30))
                       
+(ArgentinaTur "Córdoba Capital" "La Falda" '(10 30))
+(ArgentinaTur "Valle Hermoso" "La Cumbre" '(09 00))
+(ArgentinaTur "Córdoba Capital" "La Falda" '(16 00))
