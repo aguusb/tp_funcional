@@ -28,7 +28,7 @@
       [(< hora1 hora2) #f]
       [(>= min1 min2)   #t]
       [(< min1 min2)   #f]
-      [else            #t])))
+      )))
 
 #! Esta funcion devuelve una lista con los horarios disponibles a partir de la hora ingresada. Aplica la funcion comparaHora para ir filtrando. #!
 (define (horarios-disponibles lista-horas hora)
@@ -45,43 +45,43 @@
       (horarios-disponibles-sin-filter (cdr lista-horas) hora)])) ; Sino, se sigue iterando la lista de horas.  
 
 #! Esta funcion busca el indice de la localidad en la lista de localidades. Si no lo encuentra devuelve [falso]. Si la lista esta vacia, devuelve [falso]. Si el primer elemento de la lista es igual al que buscas, devuelve [true]. Sino, llama recursivamente con el resto de la lista. #!
-(define (buscar-indice localidad lista_localidades)
-  (let buscar-indice-recursivo ((resto-lista lista_localidades) (indice 0))
+(define (buscar-indice localidad lista_localidades indice)
     (cond
-      [(empty? resto-lista) #f]
-      [(equal? (car resto-lista) localidad) indice]
-      [else (buscar-indice-recursivo (cdr resto-lista) (+ indice 1))])))
+      [(empty? lista_localidades) #f]
+      [(equal? (car lista_localidades) localidad) indice]
+      [else (buscar-indice localidad (cdr lista_localidades) (+ indice 1))]))
+
+; Devuelve el elemento buscado por el Indice
+(define (obtener-elemento-indice lista indice)
+  (if (= indice 0)
+      (car lista) ; Si el índice es 0, devuelve el primer elemento
+      (obtener-elemento-indice (cdr lista) (- indice 1)))) ; Si no, sigue buscando en el resto de la lista
 
 
 #! Esta funcion suma los costos de las localidades entre el indice de origen y el de destino. Si el indice de origen es mayor o igual al de destino, devuelve 0. Sino, suma el costo del indice de origen con la suma recursiva del resto de la lista. #!
 (define (sumar-costos costos i-origen i-destino)
   (if (>= i-origen i-destino)
       0
-      (+ (list-ref costos i-origen)
+      (+ (obtener-elemento-indice costos i-origen)
          (sumar-costos costos (+ i-origen 1) i-destino))))
 
 
-;; Devuelve la sublista de horarios correspondiente al índice dado de la localidad.
-(define (obtener-horarios lista-horarios indice)
-  (if (= indice 0)
-      (car lista-horarios) ; Si el índice es 0, devuelve el primer elemento
-      (obtener-horarios (cdr lista-horarios) (- indice 1)))) ; Si no, sigue buscando en el resto de la lista
 
 (define (ArgentinaTur origen destino hora)
-  (let* ([i-origen (buscar-indice origen localidades)]
-         [i-destino (buscar-indice destino localidades)])
+  (let* ([i-origen (buscar-indice origen localidades 0)]
+         [i-destino (buscar-indice destino localidades 0)])
     (cond
       [(or (not i-origen) (not i-destino) (<= i-destino i-origen));Si no se encuentra el origen o destino, o si el destino es menor igual que el origen, lanza error
        '("Error")]
       [else
        (let* ([total-costo (sumar-costos costos i-origen i-destino)];Calcula el costo total desde el origen al destino
-              [horarios-origen (obtener-horarios horarios i-origen)] ;Obtiene la lista de horarios de la localidad de origen
+              [horarios-origen (obtener-elemento-indice horarios i-origen)] ;Obtiene la lista de horarios de la localidad de origen
               [salidas (horarios-disponibles horarios-origen hora)]) ;Filtra los horarios disponibles de la localidad de origen a partir de la hora ingresada
          (if (empty? salidas)
              (list (list origen destino) 0 '"No Hay Horarios De Salida Disponibles")
              (list (list origen destino) total-costo salidas)))])))
 
-                      
+                    
 (ArgentinaTur "Córdoba Capital" "La Falda" '(10 30))
 (ArgentinaTur "Valle Hermoso" "La Cumbre" '(09 00))
 (ArgentinaTur "Córdoba Capital" "La Falda" '(16 00))
